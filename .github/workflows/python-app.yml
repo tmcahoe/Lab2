@@ -1,0 +1,132 @@
+'''
+
+File: ... .py
+
+Written by: Team 5: Tim Cahoe,
+
+This program takes a users goal and the currenty intrest rate
+and returns controbutions they should make each year to meet 
+that goal.
+
+Pseudo-code
+1. Input investment goal and interest rate .
+2. If goal or rate is negative print an error message and stop.
+3. Use binary search (explained below) to find the required contribution amount.
+4. Print out the contribution amount in dollars and cents, with a label explaining 
+what the contribution will accomplish.
+
+The binary search will use a function to estimate earnings:
+1. Function parameters are contribution amount and interest rate.
+2. The function uses a loop to calculate how much accumulates after each year.
+3. The return value is the balance accumulated at the end of ten years.
+
+Earnings function will:
+Initialize balance to zero. Then for each year, balance becomes balance plus 
+contribution (will be deposited at year start), and after that balance becomes 
+balance plus balance times interest rate (will be credited at year end).
+
+Binary Search will:
+Lower contribution estimate is zero (zero contributions are too little)
+Upper estimate is 10% of the goal (this will reach the goal without any interest)
+while the difference between the estimates is more than $0.01:
+Middle is average of upper and lower
+Earnings is result of the estimated earnings function with the arguments 
+contribution = middle, and interest = the input interest rate if earnings < goal then 
+set lower to middle otherwise set upper to middle
+After the loop, the recommended contribution amount is upper.
+
+'''
+
+
+#from email.headerregistry import MessageIDHeader
+#from msilib import Control
+
+#---------------------------- Imports Section -------------------------------------
+#User input
+Goal = input('Please Enter the investment goal in dollars: ')
+Rate = input('Please enter current interest rate (percent): ')
+
+
+#Convert to float type
+Goal = float(Goal)
+Rate = float(Rate)/100
+
+#Negative case error handling
+if Goal < 0 or Rate < 0:
+    print()
+    print('ERROR CANNOT COMPUTE NEGATIVE NUMBER')
+    quit()
+
+#---------------------------- Functions Section -------------------------------------
+
+#Estamate Earning function
+def Estimate_Earnings(contribution, rate):
+        x=1
+        balance=0
+        while x < 11:
+            balance = balance + contribution
+            balance = balance + balance * rate
+            
+            #Below will test function if commented out
+            #print('earnings are $', balance)
+
+            x = x + 1
+        return balance
+
+#Binary Search funtion
+def Binary_Search(Goal, Rate):
+    x = 10
+    y = 1
+    Lower = 0
+    Upper = Goal / x
+    Contribution = 0
+    Middle = 0
+    Earnings = 0
+    Total=0
+
+    #While loop that will go through 10 years using variable x
+    while x > 0:
+        #Upper is set to amount w/o considering interest
+        #Lower is based on Middle and starts at 0
+        #Middle is the average between upper and lower
+        #Upper = Goal / x
+        
+        Middle = (Upper + Lower) / 2
+        Contribution = Middle
+        Earnings = Estimate_Earnings(Contribution, Rate)
+
+        #print('Upper is:', Upper, 'Lower is:', Lower, 'Middle is', Middle)
+        #Upperdisp created to round up number for display to user
+
+        Upperdisp = round(Upper,2)
+        Total = Total + Upperdisp
+        Total = Total + Total * Rate
+        Total = round(Total,2)
+       
+
+        #Display to user
+        print('--------------------------------------------------')
+        print('The amount of contribution needed at year ', y, ' of 10 is: $', Upperdisp, sep='')
+        print()
+       # print('Total for this year: $', (Upperdisp+Upperdisp*Rate), sep='')
+        print('Overall Total: $', (Total), sep='')
+        print()
+
+        #Test how close upper and lower are, set lower to middle unless goal is reached
+        if Earnings < Goal:
+            Lower = Middle 
+        else:
+            Upper = Middle
+
+        y = y + 1
+
+        x = x - 1
+
+#---------------------------- Main Code -------------------------------------
+#Call Binary Search
+Binary_Search(Goal, Rate)
+
+#Below will test the Estimate_Earning function in accordance with task 4 in Lab 2
+#Estimate_Earnings(100,0.10)
+
+
